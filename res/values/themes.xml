@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+   <style name = "ResocializerActionBarTheme"
+       	  parent = "@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/ResocializerActionBar</item>
+        <item name="android:actionBarTabTextStyle">@style/ResocializerActionBarTabText</item>
+        <item name="android:actionMenuTextColor">@color/actionbar_text</item>
+   </style>
+    <!-- ActionBar styles -->
+    <style name="ResocializerActionBar"
+           parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/actionbar_background</item>
+        <item name="android:titleTextStyle">@style/ResocializerActionBarTitleText</item>
+    </style>
+    
+    <style name="ResocializerActionBarTitleText"
+        parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/actionbar_text</item>
+    </style>
+    
+    <style name="ResocializerActionBarTabText"
+        parent="@android:style/Widget.Holo.ActionBar.TabText">
+        <item name="android:textColor">@color/actionbar_text</item>
+    </style>
+
+    <style name="ResocializerButton">
+        <item name="android:background">@color/primaryBackground</item>
+        <item name="android:textColor">@color/actionbar_text</item>
+    </style>
+    
+    <color name="actionbar_text">#FFFFFF</color>
+    <color name="primaryBackground">#C4A649</color>
+    <color name="textMidGray">#999999</color>
+    
+</resources>

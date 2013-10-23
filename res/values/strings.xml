@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Resocializer</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="get_started">Log in using Facebook</string>
+    <string name="app_id">386098464849724</string>
+    <string name="lcbText">Log Conversation</string>
+    <string name="psText">Progress</string>
+    <string name="abtText">About</string>
+    <string name="welcomeText">Ready to resocialize?</string>
+    <string name="action_logout">Log Out</string>
+    <string name="photoButton"> Take Photo </string>
+
+</resources>
