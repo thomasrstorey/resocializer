@@ -2,28 +2,44 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:columnCount="6"
+    android:gravity="fill_vertical"
     android:orientation="vertical" >
+
+    <net.resocializer.resocializer.ExtendedImageView
+        android:id="@+id/photo"
+        android:layout_width="180dp"
+        android:layout_height="320dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/prephoto" />
 
     <Button
         android:id="@+id/photoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/logButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="105dp"
-        android:background="#C4A649"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/button_color"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:text="@string/photoButton"
         android:textColor="#FFFFFF" />
 
-    <net.resocializer.resocializer.ExtendedImageView
-        android:id="@+id/photo"
+    <Button
+        android:id="@+id/logButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/photoButton"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"
-        android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
-
- 
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/button_color"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/lcbText"
+		android:visibility="invisible"
+        android:textColor="#FFFFFF" />
 
 </RelativeLayout>

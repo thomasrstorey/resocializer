@@ -18,6 +18,7 @@ public class ExtendedImageView extends ImageView {
 		super(context);
         paint = new Paint();
         center = new PointF();
+
 	}
 	public ExtendedImageView(Context context, AttributeSet attrs){
 		super(context, attrs);
@@ -31,6 +32,8 @@ public class ExtendedImageView extends ImageView {
 	}
     public void onDraw(Canvas canvas) {
     super.onDraw(canvas);
+    Log.w("resocializer", "canvas width " + canvas.getWidth());
+    Log.w("resocializer", "canvas height " + canvas.getHeight());
    	paint.setColor(Color.YELLOW);
 	paint.setStyle(Paint.Style.STROKE);
 	paint.setStrokeWidth(2);
@@ -40,11 +43,12 @@ public class ExtendedImageView extends ImageView {
 			Log.w("resocializer", "test a face");
 			if(face != null){
 				face.getMidPoint(center);
-				float l = center.x - face.eyesDistance()*1.5f;
-				float t = center.y - face.eyesDistance()*2.0f;
-				float r = center.x + face.eyesDistance()*1.5f;
-				float b = center.y + face.eyesDistance()*2.0f;
+				float l = (center.x-face.eyesDistance()/2) - face.eyesDistance()*1.0f;
+				float t = (center.y-face.eyesDistance()/2) - face.eyesDistance()*1.2f;
+				float r = (center.x-face.eyesDistance()/2) + face.eyesDistance()*1.0f;
+				float b = (center.y-face.eyesDistance()/2) + face.eyesDistance()*1.2f;
 				canvas.drawRect(l,t,r,b,paint);
+				canvas.drawPoint(center.x-face.eyesDistance()/2, center.y-face.eyesDistance()/2, paint);
 				Log.w("resocializer", "drew rectangle");
 			}
 		}

@@ -3,8 +3,13 @@ package net.resocializer.resocializer;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,9 +17,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.media.FaceDetector;
 import android.media.FaceDetector.Face;
@@ -23,17 +25,30 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.util.AttributeSet;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 
 public class CameraFragment extends Fragment implements OnClickListener {
+	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
+	private static final String PENDING_PUBLISH_KEY = "pendingPublishReauthorization";
+	private boolean pendingPublishReauthorization = false;
 	private Button pb;
+	private Button lb;
 	private ExtendedImageView photo;
 	private Bitmap photoBitmap;
 	private String mCurrentPhotoPath;
@@ -41,9 +56,15 @@ public class CameraFragment extends Fragment implements OnClickListener {
 	private static final int REQUEST_CODE = 1337;
 	private static final String JPEG_FILE_PREFIX = "resocializer";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
-	private Canvas faceCanvas;
-	private Paint facepaint;
 	private Face[] faces;
+	private UiLifecycleHelper uiHelper;
+	String fbPhotoAddress = null;
+	private Session.StatusCallback callback = new Session.StatusCallback() {
+	    @Override
+	    public void call(Session session, SessionState state, Exception exception) {
+	        onSessionStateChange(session, state, exception);
+	    }
+	};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,16 +72,55 @@ public class CameraFragment extends Fragment implements OnClickListener {
         // Inflate the layout for this fragment
     	View view = inflater.inflate(R.layout.camera, container, false);
     	pb = (Button) view.findViewById(R.id.photoButton);
+    	lb = (Button) view.findViewById(R.id.logButton);
     	photo = (ExtendedImageView) view.findViewById(R.id.photo);
     	Typeface resoLite = Typeface.createFromAsset(getActivity().getAssets(), "fonts/titillium-light.otf");
     	pb.setTypeface(resoLite);
+    	lb.setTypeface(resoLite);
+    	pb.setText("Take Photo");
     	pb.setOnClickListener(this);
-        return view;
+    	lb.setOnClickListener(this);
+    	lb.setVisibility(View.INVISIBLE);
+    	if (savedInstanceState != null) {
+    	    pendingPublishReauthorization = 
+    	        savedInstanceState.getBoolean(PENDING_PUBLISH_KEY, false);
+    	}
+    	return view;
     }
     
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+	    uiHelper = new UiLifecycleHelper(getActivity(), callback);
+	    uiHelper.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public void onResume() {
+	    super.onResume();
+	    uiHelper.onResume();
+	    // For scenarios where the main activity is launched and user
+	    // session is not null, the session state change notification
+	    // may not be triggered. Trigger it if it's open/closed.
+	    Session session = Session.getActiveSession();
+	    if (session != null &&
+	           (session.isOpened() || session.isClosed()) ) {
+	        onSessionStateChange(session, session.getState(), null);
+	    }
+
+	    uiHelper.onResume();
+	}
+	
+	@Override
+	public void onPause() {
+	    super.onPause();
+	    uiHelper.onPause();
+	}
+
+	@Override
+	public void onDestroy() {
+	    super.onDestroy();
+	    uiHelper.onDestroy();
 	}
     
     private void dispatchTakePictureIntent(int actionCode) {
@@ -105,6 +165,8 @@ public class CameraFragment extends Fragment implements OnClickListener {
         FaceDetector fd = new FaceDetector(mfacesBm.getWidth(), mfacesBm.getHeight(), maxFaces);
         fd.findFaces(mfacesBm, faces);
         photo.setFaces(faces);
+        pb.setText("New Photo");
+        lb.setVisibility(View.VISIBLE);
     }
     
     @Override
@@ -114,6 +176,11 @@ public class CameraFragment extends Fragment implements OnClickListener {
 
             takePhoto();
             Log.w("resocializer", "take a photo");
+            return;
+            
+        case R.id.logButton:
+        	Log.w("camera", "publish photo");
+        	publishStory();
 
             break;
         }
@@ -157,7 +224,6 @@ public class CameraFragment extends Fragment implements OnClickListener {
         BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
-      
         // Determine how much to scale down the image
         int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
       
@@ -168,10 +234,126 @@ public class CameraFragment extends Fragment implements OnClickListener {
       
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         photo.setImageBitmap(bitmap);
+        photoBitmap = bitmap;
         return bitmap;
     }
     
+    private void publishStory() {
+        Session session = Session.getActiveSession();
 
+        if (session != null){
+        	Bitmap imageSelected = photoBitmap;
+            // Check for publish permissions    
+            List<String> permissions = session.getPermissions();
+            if (!isSubsetOf(PERMISSIONS, permissions)) {
+                pendingPublishReauthorization = true;
+                Session.NewPermissionsRequest newPermissionsRequest = new Session
+                        .NewPermissionsRequest(this, PERMISSIONS);
+            session.requestNewPublishPermissions(newPermissionsRequest);
+                return;
+            }
+            
+            
+
+            // Part 1: create callback to get URL of uploaded photo
+               Request.Callback uploadPhotoRequestCallback = new Request.Callback() {
+               @Override
+                  public void onCompleted(Response response) {
+                   if (response.getError() != null) {  // [IF Failed Posting]
+                      Log.d("resocializer", "photo upload problem. Error="+response.getError() );
+                   }  //  [ENDIF Failed Posting]
+
+                   Object graphResponse = response.getGraphObject().getProperty("id");
+                   if (graphResponse == null || !(graphResponse instanceof String) || 
+                       TextUtils.isEmpty((String) graphResponse)) { // [IF Failed upload/no results]
+                          Log.d("resocializer", "failed photo upload/no response");
+                          Toast.makeText(getActivity()
+                                  .getApplicationContext(),
+                                  response.getError().getErrorMessage(),
+                                  Toast.LENGTH_SHORT).show();
+                   } else {  // [ELSEIF successful upload]
+                       fbPhotoAddress = "https://www.facebook.com/photo.php?fbid=" +graphResponse;
+                       Toast.makeText(getActivity()
+                               .getApplicationContext(), 
+                               "Conversation Logged",
+                               Toast.LENGTH_LONG).show();
+                   }  // [ENDIF successful posting or not]
+                }  // [END onCompleted]
+             }; 
+
+
+
+            Bundle postParams = new Bundle();
+            postParams.putString("name", "resocializer for Android");
+            postParams.putString("caption", "be #resocial!");
+            postParams.putString("description", "#resocializer is the great new way to reconnect face to face.");
+            postParams.putString("link", "http://resocializer.net/");
+            postParams.putString("message", "I put down the phone and #resocialized!");
+            //postParams.putString("picture", fbPhotoAddress);
+
+            Request.Callback callback= new Request.Callback() {
+                public void onCompleted(Response response) {
+                    JSONObject graphResponse = response
+                                               .getGraphObject()
+                                               .getInnerJSONObject();
+                    String postId = null;
+                    try {
+                        postId = graphResponse.getString("id");
+                    } catch (JSONException e) {
+                        Log.i("resocializer", "JSON error "+ e.getMessage());
+                    }
+                    FacebookRequestError error = response.getError();
+                    if (error != null) {
+                        Toast.makeText(getActivity()
+                             .getApplicationContext(),
+                             error.getErrorMessage(),
+                             Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity()
+                                 .getApplicationContext(), 
+                                 postId,
+                                 Toast.LENGTH_LONG).show();
+                    }
+                }
+            };
+
+            //Part 2: upload the photo
+            Request request = Request.newUploadPhotoRequest(session, imageSelected, uploadPhotoRequestCallback);
+            Bundle parameters = request.getParameters();
+            parameters.putString("message", "I put down the phone and #resocialized!");
+            request.setParameters(parameters);
+            request.executeAsync();
+        }
+
+
+    }
+    
+    private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
+        for (String string : subset) {
+            if (!superset.contains(string)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private void onSessionStateChange(Session session, SessionState state, Exception exception) { 
+	    if (state.isOpened()) {
+	    	if (pendingPublishReauthorization && 
+	    	        state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
+	    	    pendingPublishReauthorization = false;
+	    	}
+	    }else if (state.isClosed()) {
+	    	
+	    }
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(PENDING_PUBLISH_KEY, pendingPublishReauthorization);
+        uiHelper.onSaveInstanceState(outState);
+    }
     
 }
 

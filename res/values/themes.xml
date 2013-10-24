@@ -31,5 +31,7 @@
     <color name="actionbar_text">#FFFFFF</color>
     <color name="primaryBackground">#C4A649</color>
     <color name="textMidGray">#999999</color>
+    <color name="darkBackground">#A6882B</color>
+    <color name="lightBackground">#D8BA5D</color>
     
 </resources>
