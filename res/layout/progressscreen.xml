@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        
+                <LinearLayout 
+		android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" > 
+
+	        <ImageView
+	            android:id="@+id/line01"
+	            android:layout_width="128dp"
+	            android:layout_height="128dp"
+	            android:layout_marginTop="96dp"
+	            android:contentDescription="@string/milestoneImage"
+	            android:src="@drawable/null_line" >
+	            
+	        </ImageView>
+	        
+	        <ImageView
+	            android:id="@+id/line02"
+	            android:layout_width="128dp"
+	            android:layout_height="128dp"
+	            android:layout_marginTop="64dp"
+	            android:contentDescription="@string/milestoneImage"
+	            android:src="@drawable/null_line" >
+	            
+	        </ImageView>
+	        
+	        <ImageView
+	            android:id="@+id/line03"
+	            android:layout_width="128dp"
+	            android:layout_height="128dp"
+	            android:layout_marginTop="64dp"
+	            android:contentDescription="@string/milestoneImage"
+	            android:src="@drawable/null_line" >
+	            
+	        </ImageView>
+        </LinearLayout>
+
+        
+        <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        
+
+        <ImageView
+            android:id="@+id/milestone01"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:contentDescription="@string/milestoneImage"
+            android:src="@drawable/null_ms_01" ></ImageView>
+
+
+        <ImageView
+            android:id="@+id/milestone02"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginTop="64dp"
+            android:contentDescription="@string/milestoneImage"
+            android:src="@drawable/null_ms_02" ></ImageView>
+        
+        <ImageView
+            android:id="@+id/milestone03"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginTop="64dp"
+            android:contentDescription="@string/milestoneImage"
+            android:src="@drawable/null_ms_03" ></ImageView>
+
+        <ImageView
+            android:id="@+id/milestone04"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginTop="64dp"
+            android:contentDescription="@string/milestoneImage"
+            android:src="@drawable/null_ms_04" />
+        <TextView 
+            android:id="@+id/xmlTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"/>
+        </LinearLayout>
+        
+                
+
+
+    </RelativeLayout>
+
+
+</ScrollView>
+
+

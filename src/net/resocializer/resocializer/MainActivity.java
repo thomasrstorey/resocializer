@@ -18,6 +18,7 @@ public class MainActivity extends FragmentActivity {
 	Button lcb;
 	Typeface resoLite;
 	private SplashFragment splashFragment;
+	public String user;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,6 +62,14 @@ public class MainActivity extends FragmentActivity {
 		transaction.commit();
 	}
 	
+	public void viewProgress(View view){
+		ProgressFragment progressFragment = new ProgressFragment();
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.replace(android.R.id.content, progressFragment);
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle presses on the action bar items
@@ -75,6 +84,12 @@ public class MainActivity extends FragmentActivity {
 	    }
 	}
 	
+	public String getUser(){
+		return user;
+	}
+	public void setUser(String u){
+		user = u;
+	}
 
 }
 

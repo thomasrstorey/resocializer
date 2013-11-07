@@ -1,6 +1,12 @@
 package net.resocializer.resocializer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
+
+import org.xmlpull.v1.XmlSerializer;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +14,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,6 +125,26 @@ public class SplashFragment extends Fragment {
 	                if (user != null) {
 	                    // Display the parsed user info
 	                    wtxt.setText("Welcome, " + buildUserInfoDisplay(user) + "! ");
+	                    ((MainActivity)getActivity()).setUser(buildUserInfoDisplay(user));
+	                    boolean created = false;
+	                    try{
+	                    	File file = new File (getSaveDir(getActivity()).getAbsolutePath() + "/save_progress.xml");
+	                    	created = file.createNewFile();
+	                    	//if(created) createSaveFile(buildUserInfoDisplay(user), file);
+	                    	createSaveFile(buildUserInfoDisplay(user), file);
+	                    } catch(IOException ioe){
+	                    	Log.w("resocializer", "error creating file");
+	                    }
+	                    Log.w("resocializer", "save file exists? " + created);
+	                    try{
+	                    	File file = new File (getSaveDir(getActivity()).getAbsolutePath() + "/achievements.xml");
+	                    	created = file.createNewFile();
+	                    	
+	                    } catch(IOException ioe){
+	                    	Log.w("resocializer", "error creating achievements file");
+	                    }
+	                    Log.w("resocializer", "achievements file exists? " + created);
+	                    
 	                }
 	            }
 	        }).executeAsync();
@@ -165,6 +192,54 @@ public class SplashFragment extends Fragment {
 
 	    }
 
+	}
+	
+	private File getSaveDir(Context context) throws IOException {
+		File f = new File(context.getExternalFilesDir(null), "progress");
+		if (!f.mkdirs()) {
+	        Log.e("resocializer", "Directory not created");
+	    }
+	    return f;
+	}
+	
+	public void createSaveFile(String userName, File file){
+		try{
+			XmlSerializer xmlSerializer = Xml.newSerializer();
+			FileWriter writer = new FileWriter(file);
+			xmlSerializer.setOutput(writer);
+			xmlSerializer.startDocument("UTF-8",true);
+			xmlSerializer.startTag(null, "users");
+			xmlSerializer.startTag(null, userName);
+			xmlSerializer.startTag(null, "conversation");
+			xmlSerializer.attribute(null, "id", "0");
+			xmlSerializer.attribute(null, "friends", "0");
+			//xmlSerializer.text(userName);
+			xmlSerializer.endTag(null, "conversation");
+			//FOR TESTING PURPOSES
+			xmlSerializer.startTag(null, "conversation");
+			xmlSerializer.attribute(null, "id", "1");
+			xmlSerializer.attribute(null, "friends", "2");
+			//xmlSerializer.text(userName);
+			xmlSerializer.endTag(null, "conversation");
+			//REMOVE LATER
+			xmlSerializer.endTag(null, userName);
+			xmlSerializer.endTag(null, "users");
+			xmlSerializer.endDocument();
+			xmlSerializer.flush();
+			writer.flush();
+			writer.close();
+		} catch(FileNotFoundException e){
+			Log.w("resocializer", e.getMessage());
+			e.printStackTrace();
+		} catch(IllegalArgumentException e) {
+			Log.w("resocializer", e.getMessage());
+			e.printStackTrace();
+		} catch(IllegalStateException e){
+			Log.w("resocializer", e.getMessage());
+			e.printStackTrace();
+		} catch(IOException e){
+			Log.w("resocializer", e.getMessage());
+		}
 	}
 	
 	

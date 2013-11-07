@@ -42,7 +42,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:background="@drawable/button_color"
-        android:onClick="logConversation"
+        android:onClick="viewProgress"
         android:text="@string/psText"
         android:textColor="#FFFFFF"
         android:textSize="15sp"

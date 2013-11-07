@@ -12,5 +12,6 @@
     <string name="welcomeText">Ready to resocialize?</string>
     <string name="action_logout">Log Out</string>
     <string name="photoButton"> Take Photo </string>
+    <string name="milestoneImage"> milestone image </string>
 
 </resources>

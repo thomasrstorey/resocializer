@@ -288,8 +288,7 @@ public class CameraFragment extends Fragment implements OnClickListener {
             postParams.putString("caption", "be #resocial!");
             postParams.putString("description", "#resocializer is the great new way to reconnect face to face.");
             postParams.putString("link", "http://resocializer.net/");
-            postParams.putString("message", "I put down the phone and #resocialized!");
-            //postParams.putString("picture", fbPhotoAddress);
+            postParams.putString("message", generateString());
 
             Request.Callback callback= new Request.Callback() {
                 public void onCompleted(Response response) {
@@ -320,12 +319,28 @@ public class CameraFragment extends Fragment implements OnClickListener {
             //Part 2: upload the photo
             Request request = Request.newUploadPhotoRequest(session, imageSelected, uploadPhotoRequestCallback);
             Bundle parameters = request.getParameters();
-            parameters.putString("message", "I put down the phone and #resocialized!");
+            parameters.putString("message", generateString());
             request.setParameters(parameters);
             request.executeAsync();
         }
 
 
+    }
+    
+    private String generateString(){
+    	
+    	double r = Math.random();
+    	if(r > 0.0 && r < 0.1) return "I just #resocialized with #resocializer!";
+    	else if(r > 0.1 && r < 0.2) return "Talking face to face is fun again with #resocializer!";
+    	else if(r > 0.2 && r < 0.3) return "Talking irl is cool again with #resocializer!";
+    	else if(r > 0.3 && r < 0.4) return "I'm getting #resocial with #resocializer!";
+    	else if(r > 0.4 && r < 0.5) return "Just being my #resocial, authentic self with #resocializer.";
+    	else if(r > 0.5 && r < 0.6) return "#resocializing!";
+    	else if(r > 0.6 && r < 0.7) return "Got off the computer and #resocialized!";
+    	else if(r > 0.7 && r < 0.8) return "Seeing real faces, hearing real voices. #resocializer";
+    	else if(r > 0.8 && r < 0.9) return "I put down the phone and #resocialized!";
+    	else return "#real #present #resocializer";
+    	
     }
     
     private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
