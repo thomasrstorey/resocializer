@@ -13,5 +13,9 @@
     <string name="action_logout">Log Out</string>
     <string name="photoButton"> Take Photo </string>
     <string name="milestoneImage"> milestone image </string>
+    <string name="milestonetext01">Start your resocialization with your first resocialized conversation!</string>
+    <string name="milestonetext02">Two\'s company! Have a conversation with two friends at once.</string>
+    <string name="milestonetext03">The more the merrier! Have a four friend conversation.</string>
+    <string name="milestonetext04">You\'re on your way to getting resocialized! Have a total of five resocialized conversations.</string>
 
 </resources>

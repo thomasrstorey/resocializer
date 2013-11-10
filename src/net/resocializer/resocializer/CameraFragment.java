@@ -8,8 +8,22 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import android.content.Context;
 import android.content.Intent;
@@ -35,9 +49,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.FacebookRequestError;
-import com.facebook.HttpMethod;
 import com.facebook.Request;
-import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -180,6 +192,13 @@ public class CameraFragment extends Fragment implements OnClickListener {
             
         case R.id.logButton:
         	Log.w("camera", "publish photo");
+        	int i = 0;
+        	for(Face f : faces){
+        		if(f != null){
+        			i++;
+        		}
+        	}
+        	addConversation(i);
         	publishStory();
 
             break;
@@ -368,6 +387,56 @@ public class CameraFragment extends Fragment implements OnClickListener {
         super.onSaveInstanceState(outState);
         outState.putBoolean(PENDING_PUBLISH_KEY, pendingPublishReauthorization);
         uiHelper.onSaveInstanceState(outState);
+    }
+    
+    public void addConversation(int friends){
+    	String filePath = getActivity().getExternalFilesDir(null) + "/progress/save_progress.xml";
+    	Document doc = openXMLFile(filePath);
+    	File file = new File(filePath);
+    	Element conversation = doc.createElement("conversation");
+    	
+    	NodeList nl = doc.getElementsByTagName(((MainActivity)getActivity()).getUser());
+    	Node recent = nl.item(0).getLastChild();
+    	Log.w("resoxml", "lastchild attributes: " + recent.getAttributes().item(0).toString() + " " + recent.getAttributes().item(1).toString());
+    	int id = 0;
+    	try{
+    		id = Integer.parseInt(recent.getAttributes().getNamedItem("id").getNodeValue()) + 1;
+    	}catch(NumberFormatException nfe){
+    		Log.w("resoxml", nfe.getMessage());
+    		
+    	}
+    	conversation.setAttribute("id", Integer.toString(id));
+    	conversation.setAttribute("friends", Integer.toString(friends));
+    	nl.item(0).appendChild(conversation);
+    	filePutContents(doc, file);
+    }
+    
+    protected Document openXMLFile(String filepath){
+    	Document doc = null;
+    	try {
+    		File xml = new File(filepath);
+    		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+    		doc = dBuilder.parse(xml);
+    	} catch(Exception e){
+    		Log.w("resoxml", e.getMessage());
+    	}
+    	return doc;
+    }
+    
+    protected void filePutContents(Document doc, File file){
+    	try{
+    		TransformerFactory tFactory = TransformerFactory.newInstance();
+    		Transformer transformer = tFactory.newTransformer();
+    		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+    		DOMSource source = new DOMSource(doc);
+    		StreamResult result = new StreamResult(file);
+    		transformer.transform(source, result);
+    	}catch(TransformerConfigurationException tce){
+    		Log.w("resoxml", tce.getMessage());
+    	}catch(TransformerException te){
+    		Log.w("resoxml", te.getMessage());
+    	}
     }
     
 }

@@ -9,26 +9,29 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.util.Log;
 
-public class Conversation {
+public class Entry {
+	
 	public final int id;
-	public final int friends;
+	public String name;
 	
-	
-	public Conversation(int id, int friends){
-		this.id = id;
-		this.friends = friends;
+	public Entry(){
+		id = 0;
+		name = null;
 	}
 	
-	public static Conversation readConvo(XmlPullParser parser) throws XmlPullParserException, IOException{
-		Log.w("resoxml", "read conversation");
+	public Entry(int id, String name){
+		this.id = id;
+		this.name = name;
+	}
+	
+	public static Entry readEntry(XmlPullParser parser) throws XmlPullParserException, IOException{
 		parser.require(XmlPullParser.START_TAG, null, null);
+		String name = parser.getName();
 		int id = Integer.parseInt(parser.getAttributeValue(0));
-		int friends = Integer.parseInt(parser.getAttributeValue(1));
-		return new Conversation(id, friends);
+		return new Entry(id, name);
 	}
 	
 	public static void skip(XmlPullParser parser) throws XmlPullParserException, IOException{
-		Log.w("resoxml", "skip");
 		if (parser.getEventType() != XmlPullParser.START_TAG){
 			throw new IllegalStateException();
 		}
@@ -38,11 +41,9 @@ public class Conversation {
 			switch (parser.next()){
 			case XmlPullParser.END_TAG:
 				depth--;
-				Log.w("resoxml", "endtag");
 				break;
 			case XmlPullParser.START_TAG:
 				depth++;
-				Log.w("resoxml", "starttag");
 				break;
 			}
 		}
@@ -52,31 +53,27 @@ public class Conversation {
 		return id;
 	}
 	
-	public int getFriends(){
-		return friends;
-	}
 	
-	public static List<Conversation> getConversations(XmlPullParser parser) throws XmlPullParserException, IOException{
+	public static List<Entry> getEntries(XmlPullParser parser) throws XmlPullParserException, IOException{
 		parser.require(XmlPullParser.START_TAG, null, null);
-		List<Conversation> conversations = new ArrayList<Conversation>();
+		List<Entry> entries = new ArrayList<Entry>();
 		while(parser.next() != XmlPullParser.END_TAG){
 			if (parser.getEventType() != XmlPullParser.START_TAG) {
 				continue;
 			}
 			
 			String name = parser.getName();
-	        if (name.equals("conversation")) {
-	        	Log.w("resoxml", "found a conversation");
-	        	parser.require(XmlPullParser.START_TAG, null, "conversation");
-	        	conversations.add(readConvo(parser));
+	        if (name.equals(name)) {
+	        	parser.require(XmlPullParser.START_TAG, null, name);
+	        	entries.add(readEntry(parser));
 	        	parser.nextTag();
-	        	parser.require(XmlPullParser.END_TAG, null, "conversation");
+	        	parser.require(XmlPullParser.END_TAG, null, name);
 	        } else{
 	        	Log.w("resoxml", "inside skip");
 	        	skip(parser);
 	        }
 		}
-		return conversations;
+		return entries;
 	}
 	
 }

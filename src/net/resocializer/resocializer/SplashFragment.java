@@ -130,8 +130,8 @@ public class SplashFragment extends Fragment {
 	                    try{
 	                    	File file = new File (getSaveDir(getActivity()).getAbsolutePath() + "/save_progress.xml");
 	                    	created = file.createNewFile();
-	                    	//if(created) createSaveFile(buildUserInfoDisplay(user), file);
-	                    	createSaveFile(buildUserInfoDisplay(user), file);
+	                    	if(created) createSaveFile(buildUserInfoDisplay(user), file);
+	                    	//createSaveFile(buildUserInfoDisplay(user), file);
 	                    } catch(IOException ioe){
 	                    	Log.w("resocializer", "error creating file");
 	                    }
@@ -139,7 +139,7 @@ public class SplashFragment extends Fragment {
 	                    try{
 	                    	File file = new File (getSaveDir(getActivity()).getAbsolutePath() + "/achievements.xml");
 	                    	created = file.createNewFile();
-	                    	
+	                    	if(created) createAchievementFile(file);
 	                    } catch(IOException ioe){
 	                    	Log.w("resocializer", "error creating achievements file");
 	                    }
@@ -213,15 +213,7 @@ public class SplashFragment extends Fragment {
 			xmlSerializer.startTag(null, "conversation");
 			xmlSerializer.attribute(null, "id", "0");
 			xmlSerializer.attribute(null, "friends", "0");
-			//xmlSerializer.text(userName);
 			xmlSerializer.endTag(null, "conversation");
-			//FOR TESTING PURPOSES
-			xmlSerializer.startTag(null, "conversation");
-			xmlSerializer.attribute(null, "id", "1");
-			xmlSerializer.attribute(null, "friends", "2");
-			//xmlSerializer.text(userName);
-			xmlSerializer.endTag(null, "conversation");
-			//REMOVE LATER
 			xmlSerializer.endTag(null, userName);
 			xmlSerializer.endTag(null, "users");
 			xmlSerializer.endDocument();
@@ -242,6 +234,55 @@ public class SplashFragment extends Fragment {
 		}
 	}
 	
+	public void createAchievementFile(File file){
+		try{
+			XmlSerializer xmlSerializer = Xml.newSerializer();
+			FileWriter writer = new FileWriter(file);
+			xmlSerializer.setOutput(writer);
+			xmlSerializer.startDocument("UTF-8",true);
+			xmlSerializer.startTag(null, "achievements");
+			xmlSerializer.startTag(null, "achievement");
+			xmlSerializer.attribute(null, "id", "0");
+			xmlSerializer.attribute(null, "reqTF", "1");
+			xmlSerializer.attribute(null, "reqHF", "1");
+			xmlSerializer.attribute(null, "reqTC", "1");
+			xmlSerializer.endTag(null, "achievement");
+			xmlSerializer.startTag(null, "achievement");
+			xmlSerializer.attribute(null, "id", "1");
+			xmlSerializer.attribute(null, "reqTF", "2");
+			xmlSerializer.attribute(null, "reqHF", "2");
+			xmlSerializer.attribute(null, "reqTC", "2");
+			xmlSerializer.endTag(null, "achievement");
+			xmlSerializer.startTag(null, "achievement");
+			xmlSerializer.attribute(null, "id", "2");
+			xmlSerializer.attribute(null, "reqTF", "3");
+			xmlSerializer.attribute(null, "reqHF", "3");
+			xmlSerializer.attribute(null, "reqTC", "3");
+			xmlSerializer.endTag(null, "achievement");
+			xmlSerializer.startTag(null, "achievement");
+			xmlSerializer.attribute(null, "id", "3");
+			xmlSerializer.attribute(null, "reqTF", "5");
+			xmlSerializer.attribute(null, "reqHF", "3");
+			xmlSerializer.attribute(null, "reqTC", "4");
+			xmlSerializer.endTag(null, "achievement");
+			xmlSerializer.endTag(null, "achievements");
+			xmlSerializer.endDocument();
+			xmlSerializer.flush();
+			writer.flush();
+			writer.close();
+		} catch(FileNotFoundException e){
+			Log.w("resocializer", e.getMessage());
+			e.printStackTrace();
+		} catch(IllegalArgumentException e) {
+			Log.w("resocializer", e.getMessage());
+			e.printStackTrace();
+		} catch(IllegalStateException e){
+			Log.w("resocializer", e.getMessage());
+			e.printStackTrace();
+		} catch(IOException e){
+			Log.w("resocializer", e.getMessage());
+		}
+	}
 	
 }
 

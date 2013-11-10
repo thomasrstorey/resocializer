@@ -7,7 +7,8 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:id="@+id/progrootlayout">"
         
                 <LinearLayout 
 		android:layout_width="wrap_content"
@@ -20,6 +21,7 @@
 	            android:layout_height="128dp"
 	            android:layout_marginTop="96dp"
 	            android:contentDescription="@string/milestoneImage"
+	            android:tag="line"
 	            android:src="@drawable/null_line" >
 	            
 	        </ImageView>
@@ -30,6 +32,7 @@
 	            android:layout_height="128dp"
 	            android:layout_marginTop="64dp"
 	            android:contentDescription="@string/milestoneImage"
+	            android:tag="line"
 	            android:src="@drawable/null_line" >
 	            
 	        </ImageView>
@@ -40,6 +43,7 @@
 	            android:layout_height="128dp"
 	            android:layout_marginTop="64dp"
 	            android:contentDescription="@string/milestoneImage"
+	            android:tag="line"
 	            android:src="@drawable/null_line" >
 	            
 	        </ImageView>
@@ -50,6 +54,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
+	        
+            <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
         
 
         <ImageView
@@ -57,32 +66,90 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:contentDescription="@string/milestoneImage"
+            android:tag="graphic"
             android:src="@drawable/null_ms_01" ></ImageView>
 
+        <TextView
+            android:id="@+id/milestonetext01"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:tag="text"
+            android:text="@string/milestonetext01" />
+        
+        </LinearLayout>
 
+		 <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="64dp" >
         <ImageView
             android:id="@+id/milestone02"
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:layout_marginTop="64dp"
             android:contentDescription="@string/milestoneImage"
+            android:tag="graphic"
             android:src="@drawable/null_ms_02" ></ImageView>
+        
+        <TextView
+            android:id="@+id/milestonetext02"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:tag="text"
+            android:text="@string/milestonetext02" />
+        
+        </LinearLayout>
+        
+		<LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:layout_marginTop="64dp" >
         
         <ImageView
             android:id="@+id/milestone03"
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:layout_marginTop="64dp"
             android:contentDescription="@string/milestoneImage"
+            android:tag="graphic"
             android:src="@drawable/null_ms_03" ></ImageView>
+        
+        <TextView
+            android:id="@+id/milestonetext03"
+            android:layout_width="171dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:tag="text"
+            android:text="@string/milestonetext03" />
+        
+        </LinearLayout>
+        
+		<LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="64dp" >
 
         <ImageView
             android:id="@+id/milestone04"
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:layout_marginTop="64dp"
             android:contentDescription="@string/milestoneImage"
+            android:tag="graphic"
             android:src="@drawable/null_ms_04" />
+        
+        <TextView
+            android:id="@+id/milestonetext04"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:tag="text"
+            android:text="@string/milestonetext04" />
+        
+        </LinearLayout>
+        
         <TextView 
             android:id="@+id/xmlTest"
             android:layout_width="wrap_content"
